@@ -11,7 +11,8 @@ app.use(express.json());
 
 app.get('/api/auth', (req, res, next) => {
     res.status(200).json({
-        id: "12345"
+        id: "12345",
+        name: "Ethan"
     })
   });
 
