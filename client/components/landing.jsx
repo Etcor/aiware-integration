@@ -1,13 +1,27 @@
 import React, {useState, useContext} from 'react'
+import {useHistory} from 'react-router-dom'
+import Button from './button'
 import AppContext from './lib/context'
 
-function Landing (props) {
+function LandingPage (props) {
+    const history = useHistory()
     const {
         user,
-        login,
-        logout,
+        authorize,
+        setUserId,
         isAuthorized
     } = useContext(AppContext)
+
+    function login () {
+        fetch('/api/auth')
+            .then(res => res.json())
+            .then(user => {
+                authorize()
+                setUserId(user.id, user.name)
+                return history.push('/home')
+            })
+            .catch(console.error)
+    }
 
     return (
         <>
@@ -22,13 +36,15 @@ function Landing (props) {
                     <label className="login-label">Password</label>
                     <input type="text" className="login-input"/>
                 </div>
-                <div className="login-btn">
-                    <p>LOGIN</p>
-                </div>
+                <Button
+                    text={"LOGIN"}
+                    onClick={login}
+                    className={"login-btn"}
+                />
             </div>
         </div>
         </>
     )
 }
 
-export default Landing
+export default LandingPage
