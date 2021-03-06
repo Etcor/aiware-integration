@@ -6,10 +6,10 @@ import {
   useLocation
 } from 'react-router-dom'
 import AppContext from './lib/context'
+import Landing from './landing'
 
 function App () {
   const [isAuthorized, setAuthorized] = useState(false)
-
   const [user, setUser] = useState(null)
 
   function login () {
@@ -29,14 +29,18 @@ function App () {
 
   const context = {
     user,
-    isAuthorized
+    isAuthorized,
+    logout,
+    login
   }
-  const theme = { color: context.isAuthorized ? 'green' : 'red'}
-  if (!isAuthorized) return <h1 onClick={login} style={theme}>404 NOT AUTHORIZED</h1>
   return (
-    <div>
+    <div id="main-container">
       <AppContext.Provider value={context}>
-        <h1 onClick={logout} style={theme}>AUTHORIZED :)</h1>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={Landing}/>
+          </Switch>
+        </Router>
       </AppContext.Provider>
     </div>
   )
