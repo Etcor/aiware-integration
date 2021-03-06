@@ -1,29 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useLocation
+} from 'react-router-dom'
+import AppContext from './lib/context'
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      message: null,
-      isLoading: true
-    };
-  }
+function App () {
+  const [isAuthorized, setAuthorized] = useState(false)
 
-  componentDidMount() {
-    fetch('/api/health-check')
-      .then(res => {
-        if (res.status === 200) {
-          this.setState({
-            message: "Connection Success!",
-            isLoading: false
-          })
-        }
+  const [user, setUser] = useState(null)
+
+  function login () {
+    fetch('/api/auth')
+      .then(res => res.json())
+      .then(user => {
+        setUser(user.id)
+        setAuthorized(true)
       })
+      .catch(console.error)
   }
 
-  render() {
-    return this.state.isLoading
-      ? <h1>Test connections...</h1>
-      : <h1>{ this.state.message }</h1>;
+  function logout () {
+    setUser(null)
+    setAuthorized(false)
   }
+
+  const context = {
+    user,
+    isAuthorized
+  }
+  const theme = { color: context.isAuthorized ? 'green' : 'red'}
+  if (!isAuthorized) return <h1 onClick={login} style={theme}>404 NOT AUTHORIZED</h1>
+  return (
+    <div>
+      <AppContext.Provider value={context}>
+        <h1 onClick={logout} style={theme}>AUTHORIZED :)</h1>
+      </AppContext.Provider>
+    </div>
+  )
 }
+
+export default App
