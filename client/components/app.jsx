@@ -1,29 +1,46 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import {
+  Route,
+  Switch,
+  useHistory,
+  useLocation,
+  BrowserRouter as Router
+} from 'react-router-dom'
+import AppContext from './lib/context'
+import Landing from './landing'
+import Dashboard from './dashboard'
+import LandingPage from './landing';
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      message: null,
-      isLoading: true
-    };
+function App () {
+  const [isAuthorized, setAuthorized] = useState(false)
+  const [user, setUser] = useState({id: null, name:''})
+
+  function authorize () {
+    setAuthorized(isAuthorized => !isAuthorized)
   }
 
-  componentDidMount() {
-    fetch('/api/health-check')
-      .then(res => {
-        if (res.status === 200) {
-          this.setState({
-            message: "Connection Success!",
-            isLoading: false
-          })
-        }
-      })
+  function setUserId (id, name) {
+    setUser({id, name})
   }
 
-  render() {
-    return this.state.isLoading
-      ? <h1>Test connections...</h1>
-      : <h1>{ this.state.message }</h1>;
+  const context = {
+    user,
+    isAuthorized,
+    authorize,
+    setUserId
   }
+  return (
+    <div id="main-container">
+      <AppContext.Provider value={context}>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={LandingPage}/>
+            <Route exact path="/home" component={Dashboard}/>
+          </Switch>
+        </Router>
+      </AppContext.Provider>
+    </div>
+  )
 }
+
+export default App

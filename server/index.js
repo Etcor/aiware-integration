@@ -9,9 +9,10 @@ app.use(staticMiddleware);
 app.use(sessionMiddleware);
 app.use(express.json());
 
-app.get('/api/health-check', (req, res, next) => {
+app.get('/api/auth', (req, res, next) => {
     res.status(200).json({
-        message: "success!"
+        id: "12345",
+        name: "Ethan"
     })
   });
 
